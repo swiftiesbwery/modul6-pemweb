@@ -53,6 +53,10 @@ async function api(url, options = {}) {
         ...options
     });
 
+    if (res.status === 204) {
+        return null;
+    }
+
     return res.json();
 }
 
@@ -270,6 +274,49 @@ taskList.addEventListener("click", function(event) {
 
     if (event.target.id === "retry-btn") {
         loadTasks();
+    }
+});
+
+taskList.addEventListener("click", async function(event) {
+
+
+    const id = event.target.dataset.id;
+
+    if (event.target.classList.contains("delete-btn")) {
+
+        try {
+            await api(API_URL + "/" + id, { method: "DELETE" });
+
+            state.tasks = state.tasks.filter(function(task) {
+                return String(task.id) !== id;
+            });
+
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        }
+
+        render();
+    }
+
+    if (event.target.classList.contains("task-checkbox")) {
+
+        try {
+            const updated = await api(API_URL + "/" + id, {
+                method: "PATCH",
+                body: JSON.stringify({
+                    [F.completed]: event.target.checked
+                })
+            });
+
+            state.tasks = state.tasks.map(function(task) {
+                return String(task.id) === id ? fromApi(updated) : task;
+            });
+
+        } catch (err) {
+            errorMessage.textContent = err.message;
+        }
+
+        render();
     }
 });
 
