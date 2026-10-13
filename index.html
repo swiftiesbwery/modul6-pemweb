@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Task Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-content">
+            <div>
+                <p class="small-title">STUDENT WORKSPACE</p>
+                <h1>My Task Board</h1>
+                <p class="subtitle">Manage your assignments and stay organized.</p>
+            </div>
+
+            <div class="date-box">
+                <div>
+                    <b>Semester 1</b>
+                    <small>Task Manager</small>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div>
+                    <p>Total Tugas</p>
+                    <h2 id="totalTask">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div>
+                    <p>Belum Selesai</p>
+                    <h2 id="activeTask">0</h2>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div>
+                    <p>Selesai</p>
+                    <h2 id="doneTask">0</h2>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="add-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Tambah Tugas</h2>
+                    <p>Tambahkan tugas baru ke dalam daftar.</p>
+                </div>
+            </div>
+
+            <form id="taskForm">
+
+                <div class="input-group">
+                    <label for="title">Nama Tugas</label>
+                    <input
+                        type="text"
+                        id="title"
+                        placeholder="Contoh: Membuat laporan"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="course">Mata Kuliah</label>
+                    <select id="course">
+                        <option value="">Pilih mata kuliah</option>
+                        <option value="Pemrograman Web">Pemrograman Web</option>
+                        <option value="Basis Data">Basis Data</option>
+                        <option value="Algoritma">Algoritma</option>
+                        <option value="Jaringan Komputer">Jaringan Komputer</option>
+                        <option value="Sistem Operasi">Sistem Operasi</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="deadline">Deadline</label>
+                    <input type="date" id="deadline">
+                </div>
+
+                <button type="submit">Tambah Tugas</button>
+
+            </form>
+
+            <p id="error"></p>
+        </section>
+
+
+        <section class="task-section">
+
+            <div class="task-header">
+
+                <div>
+                    <h2>Daftar Tugas</h2>
+                    <p><span id="counter">0</span> tugas belum selesai</p>
+                </div>
+
+                <div class="filters">
+                    <button class="filter active" data-filter="all">
+                        Semua
+                    </button>
+
+                    <button class="filter" data-filter="active">
+                        Aktif
+                    </button>
+
+                    <button class="filter" data-filter="completed">
+                        Selesai
+                    </button>
+                </div>
+
+            </div>
+
+            <div id="taskList" class="task-list"></div>
+
+        </section>
+
+    </main>
+
+    <script src="https://fuaddary.github.io/Pemrograman-Web/assets/mock-api-kampus.js"></script>
+    <script src="app.js" defer></script>
+
+</body>
+</html>
