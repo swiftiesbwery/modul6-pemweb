@@ -215,6 +215,41 @@ async function loadTasks() {
     render();
 }
 
+taskForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const title = titleInput.value.trim();
+    const course = courseInput.value;
+    const deadline = deadlineInput.value;
+
+    if (title === "" || course === "" || deadline === "") {
+        errorMessage.textContent = "Semua data harus diisi.";
+        return;
+    }
+
+    errorMessage.textContent = "";
+
+    try {
+        const created = await api(API_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                [F.title]: title,
+                [F.course]: course,
+                [F.deadline]: deadline,
+                [F.completed]: false
+            })
+        });
+
+        state.tasks.push(fromApi(created));
+        render();
+        taskForm.reset();
+
+    } catch (err) {
+        errorMessage.textContent = err.message;
+    }
+});
+
 document.querySelectorAll(".filter").forEach(function(button) {
 
     button.addEventListener("click", function() {
