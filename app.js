@@ -37,6 +37,7 @@ const taskForm = document.getElementById("taskForm");
 const titleInput = document.getElementById("title");
 const courseInput = document.getElementById("course");
 const deadlineInput = document.getElementById("deadline");
+const submitButton = taskForm.querySelector('button[type="submit"]');
 
 const taskList = document.getElementById("taskList");
 const errorMessage = document.getElementById("error");
@@ -52,6 +53,18 @@ async function api(url, options = {}) {
         headers: { "Content-Type": "application/json" },
         ...options
     });
+
+    if (!res.ok) {
+        let message = "Terjadi kesalahan (" + res.status + ")";
+
+        try {
+            const body = await res.json();
+            message = body.message || body.error || message;
+        } catch (e) {
+        }
+
+        throw new Error(message);
+    }
 
     if (res.status === 204) {
         return null;
@@ -234,6 +247,9 @@ taskForm.addEventListener("submit", async function(event) {
 
     errorMessage.textContent = "";
 
+    submitButton.disabled = true;
+    submitButton.textContent = "Menyimpan...";
+
     try {
         const created = await api(API_URL, {
             method: "POST",
@@ -251,6 +267,10 @@ taskForm.addEventListener("submit", async function(event) {
 
     } catch (err) {
         errorMessage.textContent = err.message;
+
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Tambah Tugas";
     }
 });
 
@@ -270,15 +290,12 @@ document.querySelectorAll(".filter").forEach(function(button) {
     });
 });
 
-taskList.addEventListener("click", function(event) {
+taskList.addEventListener("click", async function(event) {
 
     if (event.target.id === "retry-btn") {
         loadTasks();
+        return;
     }
-});
-
-taskList.addEventListener("click", async function(event) {
-
 
     const id = event.target.dataset.id;
 
