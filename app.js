@@ -56,7 +56,7 @@ async function api(url, options = {}) {
     return res.json();
 }
 
-function showMessage(text) {
+function showMessage(text, withRetry) {
 
     const box = document.createElement("div");
     box.className = "empty-state";
@@ -65,12 +65,33 @@ function showMessage(text) {
     p.textContent = text;
     box.appendChild(p);
 
+    if (withRetry) {
+        const retry = document.createElement("button");
+        retry.type = "button";
+        retry.id = "retry-btn";
+        retry.textContent = "Coba lagi";
+        box.appendChild(retry);
+    }
+
     taskList.appendChild(box);
 }
 
 function render() {
     taskList.innerHTML = "";
 
+    if (state.status === "loading") {
+        showMessage("Memuat tugas...", false);
+        updateCounter();
+        updateStats();
+        return;
+    }
+
+    if (state.status === "error") {
+        showMessage("Gagal memuat: " + state.error, true);
+        updateCounter();
+        updateStats();
+        return;
+    }
 
     const filteredTasks = state.tasks.filter(function(task) {
 
@@ -86,7 +107,7 @@ function render() {
     });
 
     if (filteredTasks.length === 0) {
-        showMessage("Belum ada tugas di kategori ini.");
+        showMessage("Belum ada tugas di kategori ini.", false);
 
     } else {
 
@@ -178,8 +199,19 @@ function updateStats() {
 
 async function loadTasks() {
 
-    const data = await api(API_URL);
-    state.tasks = data.map(fromApi);
+    state.status = "loading";
+    render();
+
+    try {
+        const data = await api(API_URL);
+        state.tasks = data.map(fromApi);
+        state.status = "success";
+
+    } catch (err) {
+        state.status = "error";
+        state.error = err.message;
+    }
+
     render();
 }
 
@@ -197,6 +229,13 @@ document.querySelectorAll(".filter").forEach(function(button) {
 
         render();
     });
+});
+
+taskList.addEventListener("click", function(event) {
+
+    if (event.target.id === "retry-btn") {
+        loadTasks();
+    }
 });
 
 loadTasks();
